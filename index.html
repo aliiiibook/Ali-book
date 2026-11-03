@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مسابقة الفائز الصغير - مجلات علي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
+        body { font-family: 'Tajawal', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 pb-10">
+
+    <header class="bg-indigo-700 text-white shadow-lg sticky top-0 z-40">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img id="header-avatar" src="" alt="صاحب المسابقة" class="w-12 h-12 rounded-full border-2 border-amber-400 object-cover shadow-md bg-white">
+                <div>
+                    <span class="text-xs text-indigo-200 block font-semibold">مجلات علي</span>
+                    <h1 class="text-lg font-bold leading-tight">مسابقة الفائز الصغير 🏆</h1>
+                </div>
+            </div>
+            <div>
+                <button onclick="دخول()" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 rounded-lg font-bold text-xs shadow flex items-center gap-1 transition">
+                    <i class="fa-solid fa-user-shield"></i> لوحة الأدمن
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto px-4 mt-6">
+        <div id="main" class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 transition-all">
+            <div class="bg-indigo-50 p-6 text-center border-b border-indigo-100">
+                <div class="relative inline-block mb-3">
+                    <img id="main-avatar" src="" alt="صاحب المسابقة" class="w-28 h-28 rounded-full border-4 border-amber-400 object-cover mx-auto shadow-lg">
+                    <span class="absolute bottom-0 right-0 bg-amber-400 text-slate-900 rounded-full p-1 text-xs font-bold shadow">🌟</span>
+                </div>
+                <h2 class="text-xl font-extrabold text-indigo-900">استمارة التقديم في المسابقة</h2>
+                <p class="text-xs text-slate-500 mt-1">أدخل بياناتك وكود المجلة الصحيح للاشتراك</p>
+            </div>
+
+            <div class="p-6">
+                <div id="box" class="hidden p-3 rounded-xl text-sm font-bold text-center mb-4 transition-all"></div>
+
+                <form onsubmit="إرسال(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">الاسم الكامل</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-user absolute right-3 top-3.5 text-slate-400 text-sm"></i>
+                            <input type="text" id="user" required placeholder="أدخل اسمك الثلاثي" class="w-full pr-10 pl-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">رقم الهاتف</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-phone absolute right-3 top-3.5 text-slate-400 text-sm"></i>
+                            <input type="tel" id="tel" required placeholder="01xxxxxxxx" class="w-full pr-10 pl-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white text-left dir-ltr">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">كود المجلة الخاص بك</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-ticket absolute right-3 top-3.5 text-slate-400 text-sm"></i>
+                            <input type="text" id="code" required placeholder="مثال: ALI-7X9B2" class="w-full pr-10 pl-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btn-submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition flex items-center justify-center gap-2">
+                        <span>إرسال وتأكيد التقديم</span>
+                        <i class="fa-solid fa-paper-plane text-xs"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div id="admin" class="hidden bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden max-w-4xl mx-auto">
+            <div class="bg-indigo-900 text-white p-4 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-user-shield text-amber-400 text-xl"></i>
+                    <h2 class="text-base font-bold">لوحة تحكم المسؤول</h2>
+                </div>
+                <button onclick="خروج()" class="px-3 py-1.5 bg-indigo-800 hover:bg-indigo-700 rounded-lg text-xs font-semibold flex items-center gap-1 transition">
+                    <i class="fa-solid fa-arrow-right"></i> العودة
+                </button>
+            </div>
+
+            <div class="p-4 bg-slate-50 border-b border-slate-200 grid grid-cols-3 gap-2 text-center">
+                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                    <span class="text-xs text-slate-500 block">إجمالي المشتركين</span>
+                    <span id="stat-total" class="text-lg font-bold text-indigo-600">0</span>
+                </div>
+                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                    <span class="text-xs text-slate-500 block">الأكواد المستعملة</span>
+                    <span id="stat-used" class="text-lg font-bold text-amber-600">0 / 50</span>
+                </div>
+                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                    <span class="text-xs text-slate-500 block">الأكواد المتبقية</span>
+                    <span id="stat-remaining" class="text-lg font-bold text-emerald-600">50</span>
+                </div>
+            </div>
+
+            <div class="p-4">
+                <div class="flex justify-between items-center mb-4 gap-2">
+                    <input type="text" id="search" oninput="filterUsers()" placeholder="بحث بالاسم أو الهاتف أو الكود..." class="px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg w-full max-w-xs">
+                    <button onclick="exportToExcel()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold shadow flex items-center gap-1 transition">
+                        <i class="fa-solid fa-file-excel"></i> تصدير Excel
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="w-full text-xs text-right">
+                        <thead class="bg-slate-100 text-slate-600 uppercase">
+                            <tr>
+                                <th class="p-3 border-b">#</th>
+                                <th class="p-3 border-b">الاسم</th>
+                                <th class="p-3 border-b">الهاتف</th>
+                                <th class="p-3 border-b">الكود</th>
+                                <th class="p-3 border-b">تاريخ التسجيل</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rows" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const userImgBase64 = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDAVERERkeGEcaGiNjODQ4I2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wAARCAJEAqADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnA9VF1k5SVlpeYmZqbnJ2en5qjp6bx/9oADAMBA Rozs0B9U=";
+        document.getElementById('header-avatar').src = userImgBase64;
+        document.getElementById('main-avatar').src = userImgBase64;
+
+        const SUPABASE_URL = "https://YOUR_SUPABASE_URL.supabase.co";
+        const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+        let supabaseClient = null;
+        if (SUPABASE_URL !== "https://YOUR_SUPABASE_URL.supabase.co") {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+
+        const codes = [
+            "ALI-7X9B2", "ALI-4W1K8", "ALI-9M5P3", "ALI-2Z8R6", "ALI-6C3V7", 
+            "ALI-1N9F4", "ALI-8B2Q5", "ALI-3D7J1", "ALI-5H4X9", "ALI-2V6K3", 
+            "ALI-7P1M8", "ALI-9R3Z5", "ALI-4C8B2", "ALI-1F6N9", "ALI-8X3W7", 
+            "ALI-5J2Q4", "ALI-3K9H1", "ALI-6M4V7", "ALI-2B8P3", "ALI-7Z1C9", 
+            "ALI-4N5F2", "ALI-9W8X3", "ALI-1K3J7", "ALI-6Q2M4", "ALI-8H9V5", 
+            "ALI-3P4Z1", "ALI-5R7B9", "ALI-2C1F4", "ALI-7M9K3", "ALI-4X2W8", 
+            "ALI-9J5Q1", "ALI-1B8H4", "ALI-6V3Z7", "ALI-8N4P9", "ALI-3F1C2", 
+            "ALI-5W9M3", "ALI-2K4X7", "ALI-7Q8J1", "ALI-4V2B9", "ALI-9H5R3", 
+            "ALI-1Z7N4", "ALI-6P3W9", "ALI-8C2M1", "ALI-3F5K7", "ALI-5J8Q3", 
+            "ALI-2X9V4", "ALI-7B1H8", "ALI-4N3Z9", "ALI-9R6C2", "ALI-1W5P7"
+        ];
+
+        async function إرسال(e) {
+            e.preventDefault();
+            const u = document.getElementById('user').value.trim();
+            const t = document.getElementById('tel').value.trim();
+            const c = document.getElementById('code').value.trim().toUpperCase();
+            const b = document.getElementById('box');
+            
+            b.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-amber-100', 'text-amber-700', 'bg-emerald-100', 'text-emerald-700');
+
+            if (!codes.includes(c)) {
+                b.innerHTML = "❌ الكود غير صحيح!";
+                b.classList.add('bg-red-100', 'text-red-700', 'block');
+                return;
+            }
+
+            if (supabaseClient) {
+                const { data: existing } = await supabaseClient.from('users').select('*').eq('code', c);
+                if (existing && existing.length > 0) {
+                    b.innerHTML = "⚠️ الكود مستخدم مسبقاً!";
+                    b.classList.add('bg-amber-100', 'text-amber-700', 'block');
+                    return;
+                }
+
+                const { error } = await supabaseClient.from('users').insert([{ name: u, phone: t, code: c }]);
+                if (error) {
+                    b.innerHTML = "❌ حدث خطأ أثناء التسجيل السحابي!";
+                    b.classList.add('bg-red-100', 'text-red-700', 'block');
+                    return;
+                }
+            } else {
+                let used = JSON.parse(localStorage.getItem('C')) || [];
+                let users = JSON.parse(localStorage.getItem('U')) || [];
+                if (used.includes(c)) {
+                    b.innerHTML = "⚠️ الكود مستخدم مسبقاً!";
+                    b.classList.add('bg-amber-100', 'text-amber-700', 'block');
+                    return;
+                }
+                used.push(c);
+                users.push({ name: u, phone: t, code: c, created_at: new Date().toISOString() });
+                localStorage.setItem('C', JSON.stringify(used));
+                localStorage.setItem('U', JSON.stringify(users));
+            }
+
+            b.innerHTML = "🎉 تم التسجيل بنجاح!";
+            b.classList.add('bg-emerald-100', 'text-emerald-700', 'block');
+            e.target.reset();
+        }
+
+        function دخول() {
+            const p = prompt("أدخل رقم المسؤول:");
+            if (p === "01142166531") {
+                document.getElementById('main').classList.add('hidden');
+                document.getElementById('admin').classList.remove('hidden');
+                loadAdminData();
+            } else if (p !== null) {
+                alert("❌ كلمة السر غير صحيحة!");
+            }
+        }
+
+        function خروج() {
+            document.getElementById('admin').classList.add('hidden');
+            document.getElementById('main').classList.remove('hidden');
+        }
+
+        async function loadAdminData() {
+            let data = [];
+            if (supabaseClient) {
+                const { data: res } = await supabaseClient.from('users').select('*').order('created_at', { ascending: false });
+                data = res || [];
+            } else {
+                data = JSON.parse(localStorage.getItem('U')) || [];
+            }
+            window.adminUsers = data;
+            renderAdminTable(data);
+        }
+
+        function renderAdminTable(data) {
+            const r = document.getElementById('rows');
+            r.innerHTML = "";
+            document.getElementById('stat-total').innerText = data.length;
+            document.getElementById('stat-used').innerText = `${data.length} / 50`;
+            document.getElementById('stat-remaining').innerText = 50 - data.length;
+
+            data.forEach((s, idx) => {
+                const dateStr = s.created_at ? new Date(s.created_at).toLocaleDateString('ar-EG') : 'الآن';
+                r.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3 border-b text-slate-400">${idx + 1}</td>
+                        <td class="p-3 border-b font-bold text-slate-700">${s.name}</td>
+                        <td class="p-3 border-b text-slate-600 font-mono">${s.phone}</td>
+                        <td class="p-3 border-b"><span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded font-mono font-bold">${s.code}</span></td>
+                        <td class="p-3 border-b text-slate-400 text-[10px]">${dateStr}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function filterUsers() {
+            const q = document.getElementById('search').value.toLowerCase();
+            const filtered = (window.adminUsers || []).filter(u => 
+                u.name.toLowerCase().includes(q) || 
+                u.phone.includes(q) || 
+                u.code.toLowerCase().includes(q)
+            );
+            renderAdminTable(filtered);
+        }
+
+        function exportToExcel() {
+            const ws = XLSX.utils.json_to_sheet(window.adminUsers || []);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "المشاركين");
+            XLSX.writeFile(wb, "مسابقة_الفائز_الصغير.xlsx");
+        }
+    </script>
+</body>
+</html>
